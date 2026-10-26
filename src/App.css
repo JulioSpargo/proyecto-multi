@@ -182,3 +182,12 @@
     border-right-color: var(--border);
   }
 }
+
+.Button {
+  background-color: blueviolet;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
