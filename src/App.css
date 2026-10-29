@@ -191,3 +191,9 @@
   border: none;
   cursor: pointer;
 }
+
+.team {
+  display: flex;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  gap: 80 px;
+}
