@@ -1,10 +1,5 @@
 import { useState } from "react";
-
-/**
- * Introduccion — segundo apartado: qué es C++, cómo funciona y tu primer programa.
- * Uso:  <Introduccion videoUrl="https://www.youtube.com/embed/ID_DEL_VIDEO"
- *                     onBack={...} onNext={...} />
- */
+const VIDEO_INTRO = "https://www.youtube.com/embed/CkUSy-REkUM";
 
 const LINEAS = [
   {
@@ -34,9 +29,9 @@ const LINEAS = [
 ];
 
 const PASOS = [
-  { titulo: "Código fuente", detalle: "Lo que tú escribes (.cpp)", icono: "📝" },
-  { titulo: "Compilador", detalle: "Lo traduce a lenguaje máquina", icono: "⚙️" },
-  { titulo: "Ejecutable", detalle: "Tu programa, listo para correr", icono: "🚀" },
+  { titulo: "Código fuente", detalle: "Lo que tú escribes (.cpp)" },
+  { titulo: "Compilador", detalle: "Lo traduce a lenguaje máquina" },
+  { titulo: "Ejecutable", detalle: "Tu programa, listo para correr" },
 ];
 
 const RAZONES = [
@@ -46,29 +41,22 @@ const RAZONES = [
 ];
 
 function Video({ url }) {
-  if (!url) {
-    return (
-      <div className="video vacio">
-        <span aria-hidden="true">▶</span>
-        <p>
-          Aquí va tu video. Pasa la dirección de inserción con la propiedad <code>videoUrl</code>.
-        </p>
-      </div>
-    );
-  }
   return (
     <div className="video">
       <iframe
-        src={url}
+        src={url || VIDEO_INTRO}
         title="Video: ¿Qué es C++?"
-        allow="accelerometer; encrypted-media; picture-in-picture"
+        width="100%"
+        height="100%"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
       />
     </div>
   );
 }
 
-export default function Introduccion({ videoUrl = "", onBack = () => {}, onNext = () => {} }) {
+export default function Introduccion({ videoUrl = VIDEO_INTRO, onBack, onNext }) {
   const [activa, setActiva] = useState(3);
 
   return (
@@ -76,16 +64,16 @@ export default function Introduccion({ videoUrl = "", onBack = () => {}, onNext 
       <style>{css}</style>
 
       <header className="barra">
-        <button type="button" className="volver" onClick={onBack}>
-          ‹ Volver
+        <button className="volver" onClick={onBack}>
+          Volver
         </button>
-        <span className="ubicacion">Introducción</span>
+        <span>Introducción</span>
       </header>
 
       <div className="contenido">
         <section>
           <h1>¿Qué es C++?</h1>
-          <p className="lead">
+          <p>
             C++ es un lenguaje de programación con el que le das instrucciones precisas a una
             computadora. Se creó en 1985 como una mejora del lenguaje C y hoy sigue siendo uno de los
             más usados del mundo.
@@ -111,227 +99,118 @@ export default function Introduccion({ videoUrl = "", onBack = () => {}, onNext 
             La computadora no entiende C++ directamente. Un compilador convierte tu código en un
             archivo que sí puede ejecutar.
           </p>
-          <ol className="flujo">
+          <div className="pasos">
             {PASOS.map((p, i) => (
-              <li key={p.titulo} className="paso">
-                <span className="paso-icono" aria-hidden="true">{p.icono}</span>
-                <strong>{p.titulo}</strong>
-                <span>{p.detalle}</span>
-                {i < PASOS.length - 1 && <span className="flecha" aria-hidden="true">›</span>}
-              </li>
+              <div key={p.titulo} className="paso">
+                <strong>
+                  {i + 1}. {p.titulo}
+                </strong>
+                <p>{p.detalle}</p>
+              </div>
             ))}
-          </ol>
+          </div>
         </section>
 
         <section>
           <h2>Tu primer programa</h2>
-          <p>Toca cada línea para ver qué hace.</p>
+          <p>Haz clic en cada línea para ver qué hace.</p>
           <div className="editor">
-            <div className="lineas" role="list">
-              {LINEAS.map((l, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  role="listitem"
-                  className={"linea" + (i === activa ? " activa" : "")}
-                  onClick={() => setActiva(i)}
-                  aria-pressed={i === activa}
-                >
-                  <span className="num">{i + 1}</span>
-                  <code>{l.codigo}</code>
-                </button>
-              ))}
-            </div>
-            <p className="nota" aria-live="polite">
-              <strong>Línea {activa + 1}:</strong> {LINEAS[activa].nota}
-            </p>
+            {LINEAS.map((l, i) => (
+              <button
+                key={i}
+                className={i === activa ? "linea activa" : "linea"}
+                onClick={() => setActiva(i)}
+              >
+                <span className="num">{i + 1}</span>
+                <code>{l.codigo}</code>
+              </button>
+            ))}
           </div>
-          <p className="salida-etiqueta">Al ejecutarlo verás:</p>
+          <p className="nota">
+            <strong>Línea {activa + 1}:</strong> {LINEAS[activa].nota}
+          </p>
+          <p>Al ejecutarlo verás:</p>
           <pre className="salida">¡Hola, mundo!</pre>
         </section>
 
-        <footer className="pie">
-          <button type="button" className="siguiente" onClick={onNext}>
-            Continuar <span aria-hidden="true">›</span>
+        <div className="pie">
+          <button className="siguiente" onClick={onNext}>
+            Continuar
           </button>
-        </footer>
+        </div>
       </div>
     </main>
   );
 }
 
 const css = `
-.intro {
-  --fondo-1: #0f0d24;
-  --fondo-2: #2a1f5c;
-  --panel: rgba(255, 255, 255, 0.06);
-  --borde: rgba(255, 255, 255, 0.12);
-  --texto: #ffffff;
-  --texto-suave: #b9b4d6;
-  --azul: #1d6dff;
-  --azul-claro: #4da3ff;
-  min-height: 100vh;
-  padding: 0 20px 56px;
-  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
-  color: var(--texto);
-  background:
-    radial-gradient(ellipse at 80% 0%, var(--fondo-2) 0%, transparent 55%),
-    var(--fondo-1);
-}
-.intro *, .intro *::before, .intro *::after { box-sizing: border-box; }
-
 .barra {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 18px 0;
+  max-width: 750px;
+  margin: 0 auto 20px auto;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-}
-.ubicacion { color: var(--texto-suave); font-size: 0.95rem; }
-.volver {
-  font: inherit;
-  font-size: 0.95rem;
-  color: var(--texto-suave);
-  background: var(--panel);
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 8px 14px;
-  cursor: pointer;
-}
-.volver:hover { color: var(--texto); }
-
-.contenido { max-width: 760px; margin: 0 auto; display: grid; gap: 44px; }
-
-h1 { margin: 0 0 12px; font-size: clamp(2rem, 6vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; }
-h2 { margin: 0 0 10px; font-size: 1.5rem; font-weight: 700; }
-h3 { margin: 0 0 6px; font-size: 1.05rem; }
-p { margin: 0 0 14px; line-height: 1.65; color: var(--texto-suave); max-width: 68ch; }
-.lead { font-size: 1.1rem; color: #d9d5ee; }
-code { font-family: "Fira Code", Consolas, Menlo, monospace; }
-
-/* Video */
-.video {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #000;
-  border: 1px solid var(--borde);
-}
-.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.video.vacio {
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 8px;
-  text-align: center;
-  padding: 24px;
-  background: var(--panel);
-  border-style: dashed;
-}
-.video.vacio span { font-size: 2.4rem; color: var(--azul-claro); }
-.video.vacio p { margin: 0; font-size: 0.95rem; }
-
-/* Razones */
-.razones { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
-.razon { padding: 16px; background: var(--panel); border: 1px solid var(--borde); border-radius: 14px; }
-.razon p { margin: 0; font-size: 0.95rem; }
-
-/* Flujo de compilación */
-.flujo { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
-.paso {
-  position: relative;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  text-align: center;
-  padding: 18px 10px;
-  font-size: 0.9rem;
-  color: var(--texto-suave);
-  background: var(--panel);
+  color: var(--suave);
+}
+
+.contenido {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 20px 30px;
+  background: var(--tarjeta);
   border: 1px solid var(--borde);
   border-radius: 14px;
 }
-.paso strong { color: var(--texto); font-size: 1rem; }
-.paso-icono { font-size: 1.8rem; }
-.flecha {
-  position: absolute;
-  right: -14px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  font-size: 1.8rem;
-  line-height: 1;
-  color: var(--azul-claro);
-}
 
-/* Editor interactivo */
-.editor { border-radius: 14px; overflow: hidden; border: 1px solid var(--borde); background: #0a0818; }
-.lineas { display: grid; padding: 10px 0; }
-.linea {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  padding: 5px 16px;
-  font: inherit;
-  text-align: left;
-  color: #d9d5ee;
-  background: transparent;
-  border: 0;
-  border-left: 3px solid transparent;
+section { margin-bottom: 28px; }
+h1 { margin: 0 0 10px 0; font-size: 28px; }
+h2 { margin: 0 0 10px 0; font-size: 22px; color: var(--titulo); }
+p { margin: 0 0 12px 0; line-height: 1.5; }
+code, pre { font-family: Consolas, monospace; }
+.progreso { color: var(--suave); }
+
+.video { position: relative; padding-top: 56.25%; margin-bottom: 8px; background: black; border-radius: 12px; overflow: hidden; }
+.video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+.video-vacio { padding: 40px; text-align: center; background: var(--tarjeta2); border: 1px dashed var(--borde); border-radius: 12px; }
+h3 { margin: 0 0 5px 0; font-size: 17px; }
+.razones, .pasos { display: flex; flex-wrap: wrap; gap: 10px; }
+.razon, .paso { flex: 1; min-width: 180px; padding: 12px; background: var(--tarjeta2); border: 1px solid var(--borde); border-radius: 12px; }
+.razon p, .paso p { margin: 5px 0 0 0; }
+
+.editor { margin-bottom: 15px; padding: 10px 0; background: var(--codigo-fondo); border-radius: 12px; overflow: hidden; }
+.linea { display: block; width: 100%; padding: 5px 15px; text-align: left; color: var(--codigo-texto); background: none; border: none; border-left: 3px solid transparent; cursor: pointer; white-space: pre; }
+.linea:hover:enabled { background: rgba(255,255,255,0.1); }
+.num { display: inline-block; width: 25px; color: #8a97c4; }
+
+.linea.activa { background: var(--azul); border-left-color: white; }
+.nota { padding: 10px 14px; margin-top: 10px; background: var(--aviso); border: 1px solid var(--borde); border-radius: var(--radio); }
+.salida { margin: 0; padding: 10px 14px; color: var(--salida); background: var(--codigo-fondo); border-radius: var(--radio); }
+.pie { text-align: right; }
+
+.boton, .siguiente, .comenzar {
+  padding: 10px 26px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: var(--azul);
+  border: none;
+  border-radius: var(--radio);
   cursor: pointer;
-  white-space: pre;
-  overflow-x: auto;
 }
-.linea:hover { background: rgba(255, 255, 255, 0.05); }
-.linea.activa { background: rgba(77, 163, 255, 0.16); border-left-color: var(--azul-claro); }
-.num { color: #6d66a3; width: 1.2em; text-align: right; flex: none; }
-.linea code { font-size: 0.95rem; }
-.nota {
-  margin: 0;
-  padding: 14px 16px;
-  color: #e6e2f7;
-  background: rgba(255, 255, 255, 0.06);
-  border-top: 1px solid var(--borde);
-}
-.salida-etiqueta { margin: 16px 0 6px; font-size: 0.9rem; }
-.salida {
-  margin: 0;
-  padding: 14px 16px;
-  font-family: "Fira Code", Consolas, Menlo, monospace;
-  color: #8dffb0;
-  background: #050410;
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-}
+.boton:hover:enabled, .siguiente:hover, .comenzar:hover { background: var(--azul-hover); }
+.boton:active:enabled, .siguiente:active, .comenzar:active { transform: translateY(1px); }
+.boton:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Navegación */
-.pie { display: flex; justify-content: flex-end; }
-.siguiente {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 30px;
-  font: inherit;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, var(--azul-claro), var(--azul));
-  border: 0;
-  border-radius: 999px;
+.secundario, .volver, .audio {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--texto);
+  background: var(--tarjeta);
+  border: 1px solid var(--azul);
+  border-radius: var(--radio);
   cursor: pointer;
-  box-shadow: 0 8px 26px rgba(29, 109, 255, 0.4);
-  transition: transform 0.15s;
 }
-.siguiente:hover { transform: translateY(-2px); }
-
-.intro button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-
-@media (max-width: 600px) {
-  .flujo { grid-template-columns: 1fr; }
-  .flecha { right: 50%; top: auto; bottom: -22px; transform: translateX(50%) rotate(90deg); }
-}
-@media (prefers-reduced-motion: reduce) { .siguiente { transition: none; } }
+.secundario { margin-right: 10px; font-size: 16px; padding: 10px 24px; }
+.secundario:hover, .volver:hover, .audio:hover { background: var(--tarjeta2); }
 `;
